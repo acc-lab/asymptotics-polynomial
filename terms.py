@@ -339,71 +339,113 @@ def getPolyByMesh(mesh, power):
 
     
     p=prod(*([mesh]*len(body)))
-    #mesh=[0,1,2] len(body)=3 -> [(0,0,0), (0,0,1), (0,0,2), (0,1,0), (0,1,1), ..., (2,2,2)]
+    #mesh=[-1,0,1] len(body)=4 -> [(-1,-1,-1,-1), (-1,-1,-1,0), (-1,-1,-1,1), (-1,-1,0,-1), (-1,-1,0,0), ..., (1,1,1,1)]
     
     ret=[]
     loader=0
     loaderMax=len(mesh)**((3**(power+1)-1)//2) #mesh_length^[(3^(power+1)-1)/2]
     
     for tup in p:
+        #tup: (-1,-1,-1,-1) -> (-1,-1,-1,0) -> (-1,-1,-1,1) -> ...
         s=Poly(Term(0,[]))
         for i in range(len(body)):
+            
             s+=tup[i]*body[i]
+            #e.g.
+            #tup[i]: -1 -> 1 -> 0 -> -1  body[i]: x -> y -> z -> (const)
+            #tup[i]*body[i]: -x -> y -> 0 -> -1
+
+            #s: -x+y-1
+            
         loader+=1
+        #polynomial generated
+
+        
         if loader%1000==0:
             print("[*] Big F progress:{this}/{all_}".format(this=loader//1000, all_=loaderMax//1000+1))
+            #log progress
+            
+            
         yield s
 
-class lowest:
+class lowest: #-inf
     def __init__(self):pass
     def __lt__(self, obj):return True
 
 def bigF(*arg):
     ge = getPolyByMesh(mesh=mesh_k, power=m)
+    #get all polynomial
+
+    
     maxium=lowest()
+    #maxium value
+    
     maxpoly=None
+    #polynomial that makes the maxium value
 
     avoid_count = 0
     
     while True:
         try:
-            poly=next(ge)
-            power=1 if m==1 else 1/m
-            mother = getComp(lambda *inp: poly(*inp).getSquaredSum()**power)
-            if mother==0:
+            poly=next(ge) #yield
+            
+            power=1 if m==1 else 1/m #power
+            
+            mother = getComp(lambda *inp: poly(*inp).getSquaredSum()**power) #i.e. abs(poly(*inp))**(2/m), but it's more accurate
+            
+            if mother==0: #zero division error
                 avoid_count+=1
                 if avoid_count%100==1:
                     print("[*] Skipped totally {count} polynomial(s) for avoiding zero division.".format(count=avoid_count))
+                    #log
+                    
                 continue
             
-            value=(poly(*arg).getSquaredSum()**power)/mother
+            value=(poly(*arg).getSquaredSum()**power)/mother #get value
+            
             if value.real>maxium:
                 maxium=value.real
                 maxpoly=poly
+                #new maxium
+                
                 print("[!] Found new highest value {value} from the polynomial {pol}. (Mother:{mother})".format(value=maxium, pol=poly, mother=mother))
+                #log
+                
         except StopIteration:
             break
+        
     return maxium
 
 def getComp(function):
+    #the intergration definition. It's able to change anytime.
     return 2*function(1,0,0)-function(0,0,1)
 
 def getI():
+    #get I_m for each m.
     return getComp(bigF)
 
 
 #Runtime: m^[(3^(p+1)-1)/2]
 
 m=1
-p=prod(list([frac(i,4) for i in range(-4,5)]),list([Cmp(0,frac(i,4)) for i in range(-4,5)]))
-p=list(p)
+
+_raw_mesh=prod(list([frac(i,4) for i in range(-4,5)]),list([Cmp(0,frac(i,4)) for i in range(-4,5)]))
+#get mesh: re&img component=[-1,-3/4,-1/2,-1/4,0,1/4,1/2,3/4,1]
+#should be way closer, but the runtime is way too slow
+
+_mesh=list(_raw_mesh)
+
 mesh_k=[]
-for tup in p:
+for tup in _mesh:
     mesh_k.append(tup[0]+tup[1])
+    #get all usable complex number as component of polynomial
 
 
 while True:
     target=getI()
+    #get I_m
+    
     print("I{}={}".format(m,target))
     m+=1
+    
     input()
