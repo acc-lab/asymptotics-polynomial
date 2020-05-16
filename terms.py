@@ -56,7 +56,7 @@ class Cmp():
 
     def __rtruediv__(self,obj):
         #similar with __radd__
-        return Cmp(obj,0)//self
+        return Cmp(obj,0)/self
 
     def __repr__(self):
         #for printing complex numbers
