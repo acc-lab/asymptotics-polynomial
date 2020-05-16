@@ -48,7 +48,7 @@ class Cmp():
 
     def __rsub__(self,obj):
         #similar with __radd__
-        return self*(-1)-obj
+        return self*(-1)+obj
 
     def __rmul__(self,obj):
         #similar with __radd__
@@ -56,7 +56,7 @@ class Cmp():
 
     def __rtruediv__(self,obj):
         #similar with __radd__
-        return self//obj
+        return Cmp(obj,0)//self
 
     def __repr__(self):
         #for printing complex numbers
