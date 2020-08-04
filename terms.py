@@ -102,7 +102,7 @@ class Cmp():
         return (self.real_part**2+self.imaginary_part**2)
 
 class Term():
-    #A single term of polynomial, included coeffecient and xyz terms.
+    #A single term of polynomial, including coeffecient and xyz terms.
     def __lt__(self, obj):
         #This compare condition is used for sorting terms in polynomial
         
