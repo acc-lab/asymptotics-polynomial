@@ -206,7 +206,7 @@ def addable(a,b):
     return a==b or a.const==0 or b.const==0
 
 class Poly():
-    #A full polynomial, include multiple terms
+    #A full polynomial, including multiple terms
     
     def __init__(self, *arg):
         arg=list(arg)
