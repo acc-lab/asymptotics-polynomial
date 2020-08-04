@@ -12,7 +12,7 @@ from itertools import product as prod
 
 
 class Cmp():
-    #Same as builtin complex number. We rewrite a new complex type just in order to make fraction can be a complex's component
+    #Same as builtin complex number. We rewrite a new complex type just in order to make fraction can be a complex's coeffecient
     def __init__(self,real,imaginary):
         self.real_part = real
         self.imaginary_part = imaginary
